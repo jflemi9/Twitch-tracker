@@ -27,8 +27,8 @@ active_window = 60
 # Streamlit elements for displaying data
 st.title("Fl0m Chat Tracker made by me")
 st.image("imageidk.webp")
-warning_placeholder = st.text("give it a sec to start tracking...")
-st.text = ("tracking unique users per 60 seconds is this a good metric? idk the number of chatters seem low, perchance bots?????")
+st.title("give it a sec to start tracking...")
+st.title = ("tracking unique users per 60 seconds is this a good metric? idk the number of chatters seem low, perchance bots?????")
 viewer_count_placeholder = st.empty()
 active_percentage_placeholder = st.empty()
 
@@ -71,7 +71,6 @@ def monitor_chat():
                 st.write("Responded to PING with PONG.")
             
             elif len(resp) > 0:
-                warning_placeholder = st.empty()
                 parts = resp.split(' ')
                 if len(parts) > 1 and parts[1] == "PRIVMSG":
                     username = parts[0].split('!')[0][1:]  # Extract the username
