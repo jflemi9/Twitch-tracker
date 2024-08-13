@@ -21,15 +21,20 @@ headers = {
 # Dictionary to track the last message time for each unique user
 user_activity = {}
 
+# List to store chat history
+chat_history = []
+
 # Time window for considering a user active (60 seconds)
 active_window = 60
 
 # Streamlit elements for displaying data
 st.title("Fl0m Chat Tracker made by me")
 st.image("imageidk.webp")
-st.text("give it a sec to start tracking...")
+st.text("Give it a sec to start tracking...")
+st.text("Tracking unique users per 60 seconds - is this a good metric?")
 viewer_count_placeholder = st.empty()
 active_percentage_placeholder = st.empty()
+chat_history_placeholder = st.empty()
 
 def get_viewer_count():
     url = 'https://api.twitch.tv/helix/streams'
@@ -49,9 +54,12 @@ def get_viewer_count():
 
 def monitor_chat():
     try:
-        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock = ssl.wrap_socket(sock)
-        sock.connect((server, port))
+        # Set up a secure context
+        context = ssl.create_default_context()
+        
+        # Create a secure socket
+        sock = socket.create_connection((server, port))
+        sock = context.wrap_socket(sock, server_hostname=server)
 
         sock.send(f"PASS {token}\n".encode('utf-8'))
         sock.send(f"NICK {nickname}\n".encode('utf-8'))
@@ -67,13 +75,19 @@ def monitor_chat():
             
             if resp.startswith('PING'):
                 sock.send("PONG\n".encode('utf-8'))
-                st.write("Responded to PING with PONG.")
             
             elif len(resp) > 0:
                 parts = resp.split(' ')
                 if len(parts) > 1 and parts[1] == "PRIVMSG":
                     username = parts[0].split('!')[0][1:]  # Extract the username
+                    message = ' '.join(parts[3:])[1:]  # Extract the message text
                     user_activity[username] = current_time
+
+                    # Append the message to chat history
+                    chat_history.append(f"anon: {message}")
+                    
+                    # Update chat history display
+                    chat_history_placeholder.text_area("Chat History", value='\n'.join(chat_history), height=300)
 
             # Update every 10 seconds
             if current_time - last_update_time >= 10:
