@@ -1,4 +1,3 @@
-
 import socket
 import ssl
 import time
@@ -29,6 +28,7 @@ active_window = 60
 st.title("Fl0m Chat Tracker made by me")
 st.image("imageidk.webp")
 warning_placeholder = st.text("give it a sec to start tracking...")
+st.text = ("tracking unique users per 60 seconds is this a good metric? idk the number of chatters seem low, perchance bots?????")
 viewer_count_placeholder = st.empty()
 active_percentage_placeholder = st.empty()
 
